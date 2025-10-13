@@ -1,6 +1,11 @@
 use std::error::Error;
 use axum::{http::StatusCode, response::Html, routing::{get, post}, serve::Serve, Router, response::IntoResponse};
 use tower_http::services::ServeDir;
+use routes::{login, logout, signup};
+
+use crate::routes::{verify_2fa, verify_token};
+
+mod routes;
 
 // This struct encapsulates our application-related logic.
 pub struct Application {
@@ -18,8 +23,10 @@ impl Application {
         let router = Router::new()
             .nest_service("/", ServeDir::new("assets"))
             .route("/signup", post(signup))
-            .route("/login", post(login))
+            .route("/login", post( login))
             .route("/logout", post(logout))
+            .route("/verify-2fa", post(verify_2fa))
+            .route("/verify-token", post(verify_token))
             .route("/hello", get( {
                 Html("<h1>Hello, World! Welcome to Axum!</h1>")
             }));
@@ -38,14 +45,6 @@ impl Application {
     }
 }
 
-async fn signup() -> impl IntoResponse {
-    StatusCode::OK.into_response()
-}
 
-async fn login() -> impl IntoResponse {
-    StatusCode::OK.into_response()
-}
 
-async fn logout() -> impl IntoResponse {
-    StatusCode::OK.into_response()
-}
+

@@ -16,14 +16,18 @@ impl Application {
         // Move the Router definition from `main.rs` to here.
         // Also, remove the `hello` route.
         // We don't need it at this point!
-        let router = todo!();
+        let router = Router::new()
+            .nest_service("/", ServeDir::new("assets"))
+            .route("/hello", get( {
+                Html("<h1>Hello, World! Welcome to Axum!</h1>")
+            }));
 
         let listener = tokio::net::TcpListener::bind(address).await?;
         let address = listener.local_addr()?.to_string();
         let server = axum::serve(listener, router);
 
         // Create a new Application instance and return it
-        todo!()
+        Ok(Application { server, address })
     }
 
     pub async fn run(self) -> Result<(), std::io::Error> {
